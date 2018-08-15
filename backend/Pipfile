@@ -6,6 +6,11 @@ name = "pypi"
 [packages]
 sqlalchemy = "*"
 "psycopg2-binary" = "*"
+"flake8" = "*"
+black = "*"
+flask = "*"
+marshmallow = "*"
+flask-cors = "*"
 
 [dev-packages]
 
