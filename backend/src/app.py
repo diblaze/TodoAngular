@@ -11,7 +11,6 @@ app = Flask(__name__)
 CORS(app)
 
 # if needed, regenerate database schema
-Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 
 
@@ -53,7 +52,7 @@ def get_todos():
 
     # serializing as JSON
     session.close()
-    return jsonify(todos.data)
+    return jsonify(todos if todos else None)
 
 
 @app.route("/todos", methods=["POST"])
@@ -61,10 +60,10 @@ def add_todo():
     # convert post object to TodoSchema
     todo_post = TodoSchema(only=["title"]).load(request.get_json())
 
-    if not todo_post.data:
+    if not todo_post:
         raise InvalidInputException("Todo needs a title")
 
-    todo = Todo(**todo_post.data)
+    todo = Todo(**todo_post)
 
     # add todo to db
     session = Session()
@@ -72,6 +71,6 @@ def add_todo():
     session.commit()
 
     # return created todo
-    new_todo = TodoSchema().dump(todo).data
+    new_todo = TodoSchema().dump(todo)
     session.close()
     return jsonify(new_todo), 201
